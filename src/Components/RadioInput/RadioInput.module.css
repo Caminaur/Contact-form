@@ -1,0 +1,52 @@
+.inputDiv {
+  width: 100%;
+  margin: 5px 0;
+}
+.label {
+  font-size: var(--font-size-labels);
+  color: var(--color-grey-900);
+  font-weight: var(--font-weight-regular);
+}
+.input {
+  padding: 10px 0;
+  border-radius: 7px;
+  width: 100%;
+  margin: 8px 0;
+  border: 1px solid var(--color-grey-500);
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 0 10px 25px;
+  border-radius: 7px;
+  border: 1px solid var(--color-grey-500);
+  transition: background-color 300ms ease;
+}
+.flexCenter {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.row:hover {
+  border: 1px solid var(--color-green-600);
+}
+
+.row:has(input:checked) {
+  background-color: var(--color-green-200);
+}
+
+input[type="radio"] {
+  accent-color: var(--color-green-600);
+}
+
+@media (max-width: 500px) {
+  .row {
+    padding: 10px 0 10px 15px;
+  }
+}

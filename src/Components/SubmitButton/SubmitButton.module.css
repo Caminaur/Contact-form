@@ -1,0 +1,10 @@
+.btn {
+  width: 100%;
+  padding: 0.5rem 0;
+  border-radius: 5px;
+  background-color: var(--color-green-600);
+  border: none;
+  color: white;
+  font-weight: var(--font-weight-regular);
+  text-transform: capitalize;
+}

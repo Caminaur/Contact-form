@@ -1,0 +1,24 @@
+.formDiv {
+  min-height: 80%;
+  width: 500px;
+  height: 600px;
+  background-color: var(--color-white);
+  padding: 2rem;
+  max-width: 95%;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 100%;
+}
+.title {
+  font-weight: var(--font-weight-bold);
+  font-size: 24px;
+}
+.row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}

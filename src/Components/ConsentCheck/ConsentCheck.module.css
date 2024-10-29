@@ -1,0 +1,19 @@
+.row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-grey-900);
+  flex-wrap: wrap;
+}
+input[type="checkbox"] {
+  accent-color: var(--color-green-600);
+}
+.error {
+  flex-basis: 100%;
+  color: var(--color-red);
+  font-size: 14px;
+}
+label {
+  flex: 1;
+}
