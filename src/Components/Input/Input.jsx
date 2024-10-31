@@ -2,19 +2,7 @@ import React, { useState } from "react";
 import styles from "./Input.module.css";
 
 function Input(props) {
-  const { label, name, type = "text", validateFunction } = props;
-  const [valid, setValid] = useState(true);
-  const [message, setMessage] = useState("");
-
-  function validateString(e) {
-    const value = e.target.value.trim();
-    if (value === null || value === "") {
-      setValid(false);
-      setMessage("This field is required");
-    } else {
-      setValid(true);
-    }
-  }
+  const { label, name, type = "text", error, onChange } = props;
 
   return (
     <div className={styles.inputDiv}>
@@ -22,25 +10,29 @@ function Input(props) {
       {type === "textarea" ? (
         <textarea
           className={
-            valid ? `${styles.input}` : `${styles.input} ${styles.inputError}`
+            error === ""
+              ? `${styles.input}`
+              : `${styles.input} ${styles.inputError}`
           }
           name={name}
           rows={3}
-          onBlur={validateString}
+          onChange={onChange}
           style={{ maxWidth: "100%", maxHeight: "110px" }}
         ></textarea>
       ) : (
         <input
           type={type}
           id=""
+          onChange={onChange}
           className={
-            valid ? `${styles.input}` : `${styles.input} ${styles.inputError}`
+            error === ""
+              ? `${styles.input}`
+              : `${styles.input} ${styles.inputError}`
           }
           name={name}
-          onBlur={validateString}
         />
       )}
-      {valid ? "" : <p className={styles.error}>{message}</p>}
+      {error === "" ? "" : <p className={styles.error}>{error}</p>}
     </div>
   );
 }

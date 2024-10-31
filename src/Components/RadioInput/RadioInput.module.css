@@ -45,6 +45,16 @@ input[type="radio"] {
   accent-color: var(--color-green-600);
 }
 
+.flexColumn {
+  flex-direction: column;
+}
+
+.error {
+  width: 100%;
+  font-size: 14px;
+  color: var(--color-red);
+}
+
 @media (max-width: 500px) {
   .row {
     padding: 10px 0 10px 15px;
