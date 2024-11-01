@@ -1,25 +1,39 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./Form.module.css";
 import Input from "../Input/Input";
 import RadioInput from "../RadioInput/RadioInput";
 import ConsentCheck from "../ConsentCheck/ConsentCheck";
 import SubmitButton from "../SubmitButton/SubmitButton";
+import AlertContext from "../Alert/alert.context";
+import Alert from "../Alert/Alert";
 
 function Form() {
+  // Alert
+  const [, setAlert] = useContext(AlertContext);
+  const showAlert = (type) => {
+    // {alert.title, alert.message, alert.icon}
+    setAlert({
+      icon: "#",
+      title: "Message Sent!",
+      message: "Thanks for completing the form. We'll be in touch soon!",
+      type, // == type:type
+    });
+  };
+
+  // Alert
   const [formValues, setFormValues] = useState({
     name: "",
     lastName: "",
     email: "",
     message: "",
     selectedRadio: "",
-    checkBox: "",
+    checkBox: false,
   });
   const [errors, setErrors] = useState({
     name: "",
     lastName: "",
     email: "",
     message: "",
-    agreedError: "",
     radio: "",
     checkBox: "",
   });
@@ -39,13 +53,18 @@ function Form() {
 
   function validate(e) {
     e.preventDefault();
-    validateInputs();
+    validateInputs().then((e) => {
+      const isValid = (e) => Object.values(e).every((value) => value === "");
+
+      if (isValid(e)) {
+        showAlert("success");
+      }
+    });
   }
 
-  function handleInputChange(val, field) {
+  function setFormValuesAndErrors(val, field) {
     const newVal =
       field !== "email" ? validateEmptyString(val) : validateEmail(val);
-
     setFormValues((prevValues) => ({
       ...prevValues,
       [field]: val,
@@ -54,6 +73,10 @@ function Form() {
       ...prevErrors,
       [field]: newVal,
     }));
+  }
+
+  function handleInputChange(val, field) {
+    setFormValuesAndErrors(val, field);
   }
   function handleRadioChange(selection) {
     setFormValues((prevValues) => ({
@@ -65,35 +88,38 @@ function Form() {
       radio: "",
     }));
   }
-  function handleCheckboxChange(selection) {
+  function handleCheckboxChange() {
+    const newCheckBoxValue = !formValues.checkBox;
     setFormValues((prevValues) => ({
       ...prevValues,
-      checkBox: selection,
+      checkBox: newCheckBoxValue,
     }));
     setErrors((prevErrors) => ({
       ...prevErrors,
-      checkBox: "",
+      checkBox: validateCheckBox(newCheckBoxValue),
     }));
   }
 
   function validateInputs() {
-    setErrors({
-      name: validateEmptyString(formValues.name),
-      lastName: validateEmptyString(formValues.lastName),
-      email: validateEmail(formValues.email),
-      message: validateEmptyString(formValues.message),
-      checkBox: validateAgreed(),
-      radio: validateRadio(),
+    return new Promise((resolve) => {
+      const newErrors = {
+        name: validateEmptyString(formValues.name),
+        lastName: validateEmptyString(formValues.lastName),
+        email: validateEmail(formValues.email),
+        message: validateEmptyString(formValues.message),
+        checkBox: validateCheckBox(formValues.checkBox),
+        radio: validateRadio(),
+      };
+      setErrors(newErrors);
+
+      resolve(newErrors);
     });
   }
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
-  function validateAgreed() {
-    return document.getElementById("agreed").checked
-      ? ""
-      : "To submit this form, please consent to being contacted";
+  function validateCheckBox(newCheckBoxValue) {
+    return !newCheckBoxValue
+      ? "To submit this form, please consent to being contacted"
+      : "";
   }
   function validateRadio() {
     return formValues.selectedRadio === ""
@@ -111,71 +137,74 @@ function Form() {
   }
 
   return (
-    <div className={styles.formDiv}>
-      <form className={styles.form} onSubmit={(e) => validate(e)}>
-        <p className={styles.title}>Contact Us</p>
+    <>
+      <Alert />
+      <div className={styles.formDiv}>
+        <form className={styles.form} onSubmit={(e) => validate(e)}>
+          <p className={styles.title}>Contact Us</p>
 
-        <div className={styles.row}>
-          <Input
-            label="First Name"
-            name="firstName"
-            id="name"
-            value={formValues.name}
-            onChange={(e) => handleInputChange(e.target.value, "name")}
-            error={errors.name}
-          />
-          <Input
-            label="Last Name"
-            name="lastName"
-            id="lastname"
-            value={formValues.lastName}
-            onChange={(e) => handleInputChange(e.target.value, "lastName")}
-            error={errors.lastName}
-          />
-        </div>
+          <div className={styles.row}>
+            <Input
+              label="First Name"
+              name="firstName"
+              id="name"
+              value={formValues.name}
+              onChange={(e) => handleInputChange(e.target.value, "name")}
+              error={errors.name}
+            />
+            <Input
+              label="Last Name"
+              name="lastName"
+              id="lastname"
+              value={formValues.lastName}
+              onChange={(e) => handleInputChange(e.target.value, "lastName")}
+              error={errors.lastName}
+            />
+          </div>
 
-        <div className={styles.row}>
-          <Input
-            label="Email Address"
-            name="email"
-            type="email"
-            id="email"
-            value={formValues.email}
-            onChange={(e) => handleInputChange(e.target.value, "email")} // add function
-            error={errors.email}
-          />
-        </div>
-        <div className={styles.column}>
-          <RadioInput
-            options={options}
-            error={errors.radio}
-            onChange={handleRadioChange}
-          />
-        </div>
-        <div className={styles.row}>
-          <Input
-            label="Message"
-            name="message"
-            type="textarea"
-            id="message"
-            value={formValues.message}
-            onChange={(e) => handleInputChange(e.target.value, "message")}
-            error={errors.message}
-          />
-        </div>
-        <div className={styles.row}>
-          <ConsentCheck
-            message="I consent to being contacted by the team"
-            id="agreed"
-            error={errors.checkBox}
-            onChange={(e) => handleCheckboxChange(e.target.value)}
-          />
-        </div>
-        <div className={styles.row}>
-          <SubmitButton message="submit" id="btn" />
-        </div>
-      </form>
-    </div>
+          <div className={styles.row}>
+            <Input
+              label="Email Address"
+              name="email"
+              type="email"
+              id="email"
+              value={formValues.email}
+              onChange={(e) => handleInputChange(e.target.value, "email")} // add function
+              error={errors.email}
+            />
+          </div>
+          <div className={styles.column}>
+            <RadioInput
+              options={options}
+              error={errors.radio}
+              onChange={handleRadioChange}
+            />
+          </div>
+          <div className={styles.row}>
+            <Input
+              label="Message"
+              name="message"
+              type="textarea"
+              id="message"
+              value={formValues.message}
+              onChange={(e) => handleInputChange(e.target.value, "message")}
+              error={errors.message}
+            />
+          </div>
+          <div className={styles.row}>
+            <ConsentCheck
+              message="I consent to being contacted by the team"
+              id="agreed"
+              error={errors.checkBox}
+              onChange={(e) => handleCheckboxChange()}
+            />
+          </div>
+          <div className={styles.row}>
+            <SubmitButton message="submit" id="btn" />
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
 

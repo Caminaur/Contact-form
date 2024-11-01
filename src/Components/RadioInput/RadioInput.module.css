@@ -59,4 +59,7 @@ input[type="radio"] {
   .row {
     padding: 10px 0 10px 15px;
   }
+  .label {
+    margin-left: 0;
+  }
 }
